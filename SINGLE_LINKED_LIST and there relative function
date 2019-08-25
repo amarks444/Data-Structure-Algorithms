@@ -1,0 +1,185 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct single_linked_list
+{  int data;
+   struct single_linked_list *next;
+
+}SLIST;
+void initialisation(SLIST **p)
+{
+    *p = NULL;
+}
+void recursive_insertion_simple(SLIST** p,int data)
+{
+    if(*p == NULL)
+    {
+        *p = (SLIST*)malloc(sizeof(SLIST));
+        (*p)->data = data;
+        (*p)->next = NULL;
+        return;
+    }
+  recursive_insertion_simple(&(*p)->next,data);
+  return;
+}
+void recursive_insertion_ascending(SLIST** p,int data)
+{  SLIST * prv;
+    if(*p == NULL)
+    {
+        *p = (SLIST*)malloc(sizeof(SLIST));
+        (*p)->data = data;
+        (*p)->next = NULL;
+        return;
+    }
+    else if(data<(*p)->data)
+    {   SLIST * node;
+         node = (SLIST*)malloc(sizeof(SLIST));
+        (node)->data = data;
+        (node)->next = *p;
+        *p = node;
+        return;
+    }
+  recursive_insertion_simple(&(*p)->next,data);
+  return;
+}
+void recursive_insertion_descending(SLIST** p,int data)
+{  SLIST * prv;
+    if(*p == NULL)
+    {
+        *p = (SLIST*)malloc(sizeof(SLIST));
+        (*p)->data = data;
+        (*p)->next = NULL;
+        return;
+    }
+    else if(data>(*p)->data)
+    {   SLIST * node;
+         node = (SLIST*)malloc(sizeof(SLIST));
+        (node)->data = data;
+        (node)->next = *p;
+        *p = node;
+        return;
+    }
+  recursive_insertion_simple(&(*p)->next,data);
+  return;
+}
+void ascending_insertion(SLIST **p,int data)
+{  SLIST *prv , *curr ,* node = (SLIST *)malloc(sizeof(SLIST));
+   node->data = data;
+   for(curr = *p,prv = NULL;curr && data > curr->data;curr = curr->next)
+      prv = curr;
+   node->next = curr;
+   if(prv)
+    prv->next = node;
+   else
+    *p = node;
+}
+void descending_insertion(SLIST **p,int data)
+{  SLIST *prv , *curr ,* node = (SLIST *)malloc(sizeof(SLIST));
+   node->data = data;
+   for(curr = *p,prv = NULL;curr && data <curr->data;curr = curr->next)
+      prv = curr;
+   node->next = curr;
+   if(prv)
+    prv->next = node;
+   else
+    *p = node;
+}
+void recursive_reverse(SLIST **p)
+{  if(*p)
+   {
+       recursive_reverse(&(*p)->next);
+       printf("%d ",(*p)->data);
+   }
+   return;
+}
+void iterative_reverse(SLIST **p)
+{  SLIST *fwd = NULL,*prv = NULL,*curr = *p;
+   while(curr)
+   {  fwd = curr->next;
+      curr->next  = prv;
+      prv = curr;
+      curr = fwd;
+   }
+   *p = prv;
+   return;
+}
+
+int recursive_count( SLIST *p)
+{  if(!p)
+    {
+        return 0;
+    }
+    return recursive_count(p->next) +1 ;
+}
+int iterative_count( SLIST *p)
+{  int count = 0;
+    while(p)
+    {   count++;
+        p = p->next;
+
+    }
+    return count;
+}
+void normal_insertion(SLIST **p,int data)
+{  SLIST *prv , *curr ,* node = (SLIST *)malloc(sizeof(SLIST));
+   node->data = data;
+   for(curr = *p,prv = NULL;curr;curr = curr->next)
+      prv = curr;
+   node->next = curr;
+   if(prv)
+    prv->next = node;
+   else
+    *p = node;
+}
+void display(SLIST *p)
+{  if(p==NULL)
+    return;
+   printf("%d ",p->data);
+   display(p->next);
+}
+void iterative_display(SLIST *p)
+{  if(p==NULL)
+    return;
+
+   while(p)
+   {   printf("%d ",p->data);
+       p = p->next;
+   }
+ return;
+}
+void deletion(SLIST **p,int data)  ///Case 1: when element Not Found.
+{   SLIST *curr,*prv;              ///Case 2: when element is at front.   ///Case 4: when element is at end.
+    int found = 0;                 ///Case 3: when element is at middle.
+    for(curr = *p,prv = NULL;curr && found ==0;curr = curr->next)
+ {
+
+
+    if(prv ==NULL && data == curr->data) ///element found at Front
+       {  *p = curr->next;
+           free(curr);
+           found = 1;
+       }
+    else if(prv !=NULL && data == curr->data) ///element found at middle or at end
+       {  prv->next = curr->next;
+          free(curr);
+          found = 1;
+       }
+    else prv = curr;
+ }
+  if(found ==0) printf("\nData Not Found\n");
+    return ;
+}
+int main()
+{
+    SLIST *p;
+    initialisation(&p);
+    descending_insertion(&p,12);
+    descending_insertion(&p,13);
+    descending_insertion(&p,14);
+    descending_insertion(&p,15);
+    descending_insertion(&p,16);
+    descending_insertion(&p,17);
+    deletion(&p,22);
+    display(p);
+    return 0;
+}
