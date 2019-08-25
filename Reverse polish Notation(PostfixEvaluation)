@@ -1,0 +1,66 @@
+#include<stdio.h>   ///isdigit(),atot(),is_opererator()
+#include<stdlib.h>
+#include<math.h>
+#include<string.h>
+#include<ctype.h>
+#define MAX 100
+typedef struct stack
+{  int top;
+   int data[MAX];
+}STACK;
+
+void initialisation( STACK **s )
+{
+   (*s)->top = -1;
+}
+int is_operator(char c)
+{
+    return(c=='+'||c=='-' || c=='/' || c=='*'|| c=='^' );
+}
+int evaluate(int a,char c,int b)
+{
+    if(c =='+')
+        return a+b;
+    else if(c =='-')
+        return a-b;
+    else if(c =='/')
+        return a/b;
+    else if(c =='*')
+        return a*b;
+    else if(c =='^')
+        return pow(a,b);
+    else
+        return 0;
+}
+int post_evaluate(STACK ** stk ,char *s)
+{   char t[10];
+    int x,y,val,i = 0,j=0;
+    while(s[i] != '\0')
+    {  for(j=0;s[i] != '\0' && s[i] != ',';j++,i++)
+           t[j] = s[i];
+       t[j] ='\0';
+        val = atoi(t);
+        if(!is_operator(t[0]))
+          (*stk)->data[++((*stk)->top)] = val;
+        else   ///t[i] == 5;
+        {  x = (*stk)->data[((*stk)->top)--];
+           y = (*stk)->data[((*stk)->top)--];
+           (*stk)->data[++((*stk)->top)] = evaluate(y,t[0],x);
+        }
+      if(s[i])
+         i++;
+    }
+    return (*stk)->data[((*stk)->top)--];
+}
+int main()
+{   STACK *s;
+    STACK * p = (STACK *)malloc(sizeof(STACK));
+    s = p;
+    char pst_exp[100];
+    initialisation(&s);
+    printf("Enter Postfix Expresion :");
+    scanf("%s",pst_exp);
+    int val = post_evaluate(&s,pst_exp);
+    printf("%d",val);
+    return 0;
+}
