@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#define MAX 10
+
+typedef struct linked
+{  int data;
+   struct linked *next;
+}STACK;
+
+void initialisation(STACK  **p)
+{
+   (*p) = NULL;
+}
+void push(STACK  **p,int data)
+{  STACK * node =(STACK *)malloc(sizeof(STACK));
+   node->data = data;
+    if(*p == NULL)
+      {  node->next = NULL;
+         *p = node;
+         return; 
+      }
+    node->next = *p;
+     *p = node;
+     return;
+}
+int  pop(STACK  **p)
+{  STACK  * temp;
+    if(*p == NULL)
+  {  printf("\nStack Is Empty\n");
+     return -1;
+  }
+    temp = *p;
+   *p =  (*p)->next ;
+     free(temp);
+     return;
+}
+int is_Empty(STACK * p)
+{
+    if(p == NULL)
+      return 1;
+    return 0;
+}
+/*8int is_Full(STACK  p)
+{
+    if(p.top == MAX-1)
+      return 1;
+    return 0;
+}*/
+
+
+void display(STACK *s)
+{ STACK *curr;
+  for(curr = s;curr;curr = curr->next)
+    printf("%d ",curr->data);
+   printf("\n");
+   return;
+}
+int main()
+{   STACK *s;
+    int a=0,b,val;
+    initialisation(&s);
+    while(a!=-1)
+    {   //clrscr();
+       printf("\nEnter A/C to your Choice\n");
+       printf("\nEnter '1' to Insert\n");
+       printf("\nEnter '2' to Pop\n");
+       printf("\nEnter '3' to check Empty\n");
+       ///printf("\nEnter '4' to check Full\n");
+       printf("\nEnter '5' to Display\n");
+       printf("\nEnter '-1' to check Full\n");
+       printf("\nEnter: ");
+       scanf("%d",&b);
+       switch(b)
+       {  case 1:printf("\nEnter Data to Insert\n");
+                 scanf("%d",&val);
+                 push(&s,val);
+                  break;
+          case 2:
+
+                 pop(&s);
+                 printf("\nEnter Data Popped\n");
+                  break;
+          /*case 4: val = is_Full( s);
+                  if(val==1)
+                    printf("\nStack is Full\n");
+                  else
+                    printf("\nStack Has Some Space\n");
+                  break;*/
+         case 3: val = is_Empty(s);
+                  if(val==1)
+                    printf("\nStack is Empty\n");
+                  else
+                    printf("\nStack Has Some Data in it\n");
+                  break;
+         case 5:  printf("\n Stack elemnts are: \n");
+                  display( s);
+                  break;
+         case -1:  printf("\n Exit \n");
+                  break;
+       }
+    }
+    return 0;
+}
