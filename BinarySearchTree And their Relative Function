@@ -97,7 +97,7 @@ void iterative_Postorder(BST * root)   ///Using_Two_Stack.
 
         stk1[++top1] = p;
        while(p)
-       {
+       {  ///printf("%d ",p->data);
            if( top1 ==  -1 )
            { break;
 
@@ -254,7 +254,7 @@ void mirror_image(BST ** root)
 { BST *temp = NULL;
    if(*root)
    { mirror_image(&(*root)->left);
-     mirror_image(&(*root)->left);
+     mirror_image(&(*root)->right);
     temp = (*root)->left;
     (*root)->left = (*root)->right;
     (*root)->right = temp;
