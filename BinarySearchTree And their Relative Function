@@ -1,0 +1,340 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 50
+typedef struct Binary_Search_Tree{
+    int data;
+    struct Binary_Search_Tree *left,*right;
+}BST;
+
+void rec_insertion( BST ** root,int data)
+{  BST * p = *root;
+   if(*root == NULL)
+     { BST *node =(BST *)malloc(sizeof(BST));
+         node->data = data;
+         node->left =  NULL; node->right = NULL;
+          *root = node;
+         return;
+     }
+   else
+    {
+       if( data <= p->data )
+           rec_insertion(&(p)->left,data);
+       else
+          rec_insertion(&(p)->right,data);
+    }
+}
+void iterative_insertion( BST ** root,int data)
+{  BST *prv,*cur = *root;
+   BST *node = (BST *)malloc(sizeof(BST));
+         node->data = data;
+         node->left =  NULL; node->right = NULL;
+
+      prv = cur;
+     while(cur!=NULL)     ///!=NULL
+    {   prv = cur;
+       if( data <= cur->data )
+           {cur = cur->left;}
+       else
+          {cur = cur->right;}
+    }
+    if( data <= prv->data )
+         prv->left = node;
+    else
+        prv->right = node;
+    return;
+}
+void iterative_Inorder(BST * root)
+{   int top = -1;
+    BST *p = root , *stk[MAX];
+   while(1)
+   {
+       while(p)
+       {   if(top == MAX-1)
+           {  printf("\nSTACK IS FULL\n");
+              exit(1);
+           }
+           stk[++top] = p;
+           p = p->left;
+       }
+      if( top!= -1 )
+      {  printf("%d ",stk[top]->data);
+         p = stk[top--]->right;
+         ///p = p->right;
+      }
+      else
+         {  break;  }
+   }
+}
+void iterative_Preorder(BST * root)
+{   int top = -1;
+    BST *p = root , *stk[MAX];
+   while(1)
+   {
+       while(p)
+       {    printf("%d ",p->data);
+           if(top == MAX-1)
+           {printf("\nSTACK IS FULL\n");
+           exit(1);
+           }
+           stk[++top] = p;
+           p = p->left;
+       }
+      if( top!= -1 )
+      { /// printf("%d ",stk[top]->data);
+         p = stk[top--]->right;
+         ///p = p->right;
+      }
+      else
+         {  break;  }
+   }
+}
+void iterative_Postorder(BST * root)   ///Using_Two_Stack.
+{   int top1 = -1,top2 = -1;
+    BST *p=root , *stk1[MAX],*stk2[MAX];
+
+     if(root)
+     {
+
+        stk1[++top1] = p;
+       while(p)
+       {
+           if( top1 ==  -1 )
+           { break;
+
+           }
+
+           p = stk1[top1--];     ///poping from the first stack
+           stk2[++top2] = p;     ///pushing to the second stack 1st stack top element.
+           if(p->left!= NULL)
+             {     stk1[++top1] = p->left;   }  ///pushing to the first stack
+          if(p->right!= NULL)
+             {   stk1[++top1] = p->right; }    ///pushing to the first stack
+       }
+     }
+     while(top2!=-1)
+     {
+         printf("%d ",stk2[top2--]->data);
+     }
+   ///}
+}
+void pre_order( BST * root)
+{   BST *p = root;
+    if(p == NULL)
+     { return; }
+    printf("%d ",p->data);
+    pre_order( root->left);
+    pre_order( root->right);
+
+}
+void In_order( BST * root)
+{   BST *p = root;
+    if(p == NULL)
+     { return; }
+
+    In_order( root->left);
+    printf("%d ",p->data);
+    In_order( root->right);
+
+}
+void Post_order( BST * root)
+{   BST *p = root;
+    if(p == NULL)
+     { return; }
+
+    Post_order( root->left);
+
+    Post_order( root->right);
+     printf("%d ",p->data);
+}
+int find_min( BST* root)
+{
+    if(root->left == NULL)
+         return root->data;
+    else
+       find_min(root->left);
+}
+int iterative_findmin( BST* root)
+{
+
+     while(root->left)
+        {root = root->left;}
+     return root->data;
+}
+int find_smallest(BST *root)
+{  if( root == NULL)
+      return 0;
+   else if( root->left == NULL )
+        return root->data;
+   find_smallest(root->left);
+}
+int find_biggest(BST *root)
+{  if( root == NULL)
+      return 0;
+   else if( root->right == NULL )
+        return root->data;
+   find_biggest(root->right);
+}
+void deletion( BST **root ,int data )
+{ if(*root == NULL)
+    {  printf("\n%d: Not Found\n",data);
+       return;  }
+  else if(data < (*root)->data)
+    deletion( &(*root)->left ,data );
+  else if(data > (*root)->data)
+    deletion( &(*root)->right ,data );
+   else
+  {   BST  *temp = *root;
+      if((*root)->right == NULL && (*root)->left == NULL)
+      {    *root = NULL;                            ///leaf node i.e both Right and Left Has No Child.
+           free(temp);  }
+      else if((*root)->left == NULL)  ///  Has only Right Child
+             {*root = (*root)->right;
+              free(temp);}
+      else if((*root)->right == NULL) ///  Has only Left Child
+             {*root = (*root)->left;
+              free(temp);}
+      else   ///data == root->data;    Has both Child Left as well as Right.
+        { (*root)->data = find_min((*root)->right);
+           deletion( &(*root)->right , (*root)->data );
+
+        }
+  }
+}
+void iterative_Deletion( BST **root ,int data )
+{   int found = 0;
+    if(*root == NULL)
+    return;
+  BST  *prev,**temp1 = root;
+  while(*temp1 && found ==0)
+   {   if( data < (*temp1)->data )
+        {  prev = *temp1;
+           temp1 = &(*temp1)->left;     }
+       else if( data > (*temp1)->data )
+        {  prev = *temp1;
+           temp1 = &(*temp1)->right;     }
+        else
+          {
+               found = 1;
+               break;
+          }
+
+   }
+   if(found ==0)
+      {printf("\n%d: Not Found\n",data);
+      return;}
+    BST  *temp = *temp1;
+      if((temp)->right == NULL && (temp)->left == NULL)
+      {    *temp1 = NULL;                            ///leaf node i.e both Right and Left Has No Child.
+           free(temp);  }
+      else if((temp)->left == NULL)  ///  Has only Right Child
+             {*temp1 = (*temp1)->right;
+              free(temp);}
+      else if((temp)->right == NULL) ///  Has only Left Child
+             {*temp1 = (*temp1)->left;
+              free(temp);}
+      else   ///data == root->data;    Has both Child Left as well as Right.
+        { (*temp1)->data = iterative_findmin((*temp1)->right);
+           deletion( &(*temp1)->right , (*temp1)->data );
+
+        }
+
+}
+int max1(int a,int b)
+{
+    return a>b?a:b;
+}
+int height(BST *root)
+{
+    if(root == NULL)
+        return -1;
+    return (1 + max1(height(root->left),height(root->right)));
+}
+
+void mirror_image(BST ** root)
+{ BST *temp = NULL;
+   if(*root)
+   { mirror_image(&(*root)->left);
+     mirror_image(&(*root)->left);
+    temp = (*root)->left;
+    (*root)->left = (*root)->right;
+    (*root)->right = temp;
+   }
+   return;
+}
+
+int total_node(BST* root)
+ {  if(root == NULL)
+      return 0;
+    return( total_node(root->left) + total_node(root->right) + 1) ;
+ }
+
+ int total_Leafnode(BST* root)
+ {  if(root == NULL)
+      return 0;
+    else if(root->right == NULL && root->left == NULL)
+      return 1;
+    return total_Leafnode(root->left) + total_Leafnode(root->right);
+
+ }
+
+ int Total_Internal_Node(BST *root )
+ {  if(root == NULL|| (root->left==NULL && root->right==NULL) )  ///|| (root->left==NULL && root->right==NULL)
+       return 0;
+     return Total_Internal_Node(root->left) + Total_Internal_Node(root->right) +1;
+ }
+ void delete_WholeTree(BST  **root)
+ {  BST *temp = root;
+
+     if(*root == NULL)
+       return;
+     delete_WholeTree(&(*root)->left);
+     delete_WholeTree(&(*root)->right);
+     free(*root);
+     return;
+ }
+ void remove_tree_memory (BST **aar)
+{
+      if(*aar != NULL)
+     {
+         remove_tree_memory (&(*aar)->left);
+         remove_tree_memory (&(*aar)->right);
+         free (*aar);
+      }
+}
+
+int main()
+{   BST *root = NULL;
+    rec_insertion(&root,15);
+    rec_insertion(&root,13);
+    rec_insertion(&root,87);
+    rec_insertion(&root,19);
+    rec_insertion(&root,29);
+    rec_insertion(&root,39);
+    rec_insertion(&root,49);
+    rec_insertion(&root,11);
+    ///iterative_insertion(&root,8);
+    ///pre_order( root);  printf(" recursive preorder\n");
+    ///iterative_Preorder(root); printf("\n");
+    ///Post_order( root); printf(" recursive postorder\n");
+    ///iterative_Postorder( root);  printf("\n");
+    ///iterative_Inorder(root);printf("\n");
+    In_order( root);    printf(" recursive Inorder\n");
+    ///deletion(&root,8);
+    In_order( root);    printf(" recursive Inorder\n");
+    ///iterative_Deletion( &root, 13);
+    ///iterative_Deletion( &root, 7);
+
+    ///deletion(&root,2);
+    Post_order( root); printf(" recursive postorder\n");
+    ///mirror_image(&root);
+    remove_tree_memory(&root);
+    root = NULL;
+    Post_order(root); printf(" recursive postorder\n");
+    //printf("\nTree Height :%d\n",height(root));
+    //printf("\nTotal Nodes :%d\n",total_node(root));
+    //printf("\nTotal Leaf_Nodes :%d\n",total_Leafnode(root));
+    //printf("\nTotal Internal_Nodes :%d\n",Total_Internal_Node(root));
+    //printf("\nSmallest element is :%d\n",find_smallest(root));
+    ///printf("\nbiggest element is :%d\n",find_biggest(root));
+    return 0;
+}
